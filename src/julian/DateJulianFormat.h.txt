@@ -1,0 +1,28 @@
+/**********************************************************
+
+**********************************************************/
+class DateJulianFormat:public Object{
+  protected:
+    void init(void);
+    char parseResolve(String &parte,String &txt,DateJulian &date);
+    void formatResolve(String &parte,String &txt,DateJulian &date);
+    char diaSet(String &parte,String &txt,DateJulian &date);
+    char mesSet(String &parte,String &txt,DateJulian &date);
+    char anoSet(String &parte,String &txt,DateJulian &date);
+    char horaSet(String &parte,String &txt,DateJulian &date);
+    char minutoSet(String &parte,String &txt,DateJulian &date);
+    char segundoSet(String &parte,String &txt,DateJulian &date);
+    char separadorSet(char s,String &parte,String &txt,DateJulian &date);
+    char diaPut(String &parte,String &txt,DateJulian &date);
+    char mesPut(String &parte,String &txt,DateJulian &date);
+    char anoPut(String &parte,String &txt,DateJulian &date);
+    char horaPut(String &parte,String &txt,DateJulian &date);
+    char minutoPut(String &parte,String &txt,DateJulian &date);
+    char segundoPut(String &parte,String &txt,DateJulian &date);
+  public:
+    DateJulianFormat();
+    ~DateJulianFormat();
+    char   isDateJulian(DateJulian &date);
+    String format(const DateJulian &date,cchar *format="dd/MM/yyyy HH:mm:ss");
+    char   parse(DateJulian &date,cchar *text,cchar *format="dd/MM/yyyy HH:mm:ss");
+};

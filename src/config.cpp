@@ -1,0 +1,17 @@
+NODE
+  *cMemNode=0;
+int
+  cStdout=1,
+  cDateMax=20380101,
+  cDateUtcMax=2145927600;
+char
+  cDateTz=0;
+void
+  *cHexdumpPrint=VOID(printf);
+int
+  dnsDebug=0,
+  dnsTimeout=5;
+char
+  sk32debug=0;
+int
+  sk32readpart=1024;

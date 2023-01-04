@@ -1,0 +1,279 @@
+/*=========================================================
+
+=========================================================*/
+DateJulian::DateJulian(){
+  init();
+}
+DateJulian::DateJulian(double value){
+  init();
+  fromDouble(value);
+}
+DateJulian::DateJulian(const DateJulian &value){
+  init();
+  fromDouble(*(DateJulian*)&value);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian::~DateJulian(){
+  if(julia)
+    cJulianFree(julia);
+}
+/*=========================================================
+
+=========================================================*/
+void DateJulian::init(void){
+  cDateTzConfig();
+  julia=cJulianAlloc();
+}
+/*=========================================================
+
+=========================================================*/
+void DateJulian::update(void){
+  cJulianTo(julia->julian,*julia);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::now(void){
+  cJulianNow(*julia);
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::debug(){
+  cJulianDebug(*julia);
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::addSecond(int value){
+  cJulianAddSecond(value,*julia);
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::setSecond(int value){
+  julia->second=value;
+  cJulianFrom(*julia);
+  update();
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::setMinute(int value){
+  julia->minute=value;
+  cJulianFrom(*julia);
+  update();
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::setHour(int value){
+  julia->hour=value;
+  cJulianFrom(*julia);
+  update();
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::setDay(int value){
+  julia->day=value;
+  cJulianFrom(*julia);
+  update();
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::setMonth(int value){
+  julia->month=value;
+  cJulianFrom(*julia);
+  update();
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::setYear(int value){
+  julia->year=value;
+  cJulianFrom(*julia);
+  update();
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::set(int year,int month,int day,int hour,int minute,int second){
+  cJulianSet(year,month,day,hour,minute,second,*julia);
+  update();
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::addMinute(int value){
+  return addSecond(value*60);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::addHour(int value){
+  return addMinute(value*60);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::addDay(int value){
+  return setDay(julia->day+value);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::addMonth(int value){
+  return setMonth(julia->month+value);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::addYear(int value){
+  return setYear(julia->year+value);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::fromDouble(double value){
+  double
+    resto=fmod(value,1);
+
+  value-=resto;
+  resto=(float)(resto*pow(10,6));
+  if(resto-(long)resto>.5)
+    resto+=1;
+  resto=long(resto);
+
+  julia->year=(int)(value/pow(10,4));
+  julia->month=(int)((value-(julia->year*pow(10,4)))/pow(10,2));
+  julia->day=(int)(value-julia->year*pow(10,4)-julia->month*pow(10,2));
+  julia->hour=(int)(resto/pow(10,4));
+  julia->minute=(int)((resto-(julia->hour*pow(10,4)))/pow(10,2));
+  julia->second=(int)(resto-julia->hour*pow(10,4)-julia->minute*pow(10,2));
+
+  return set(
+    julia->year,
+    julia->month,
+    julia->day,
+    julia->hour,
+    julia->minute,
+    julia->second
+  );
+}
+/*=========================================================
+
+=========================================================*/
+double DateJulian::get(void){
+  return 0
+    +julia->year*pow(10,4)
+    +julia->month*pow(10,2)
+    +julia->day
+    +julia->hour*pow(10,-2)
+    +julia->minute*pow(10,-4)
+    +julia->second*pow(10,-6)
+  ;
+}
+/*=========================================================
+
+=========================================================*/
+int DateJulian::getYear(void){return julia->year;}
+int DateJulian::getMonth(void){return julia->month;}
+int DateJulian::getDay(void){return julia->day;}
+int DateJulian::getHour(void){return julia->hour;}
+int DateJulian::getMinute(void){return julia->minute;}
+int DateJulian::getSecond(void){return julia->second;}
+/*=========================================================
+
+=========================================================*/
+DateJulian ::operator double(){
+  return get();
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::operator=(double value){
+  return fromDouble(value);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::operator=(const DateJulian &value){
+  return fromDouble(*(DateJulian*)&value);
+}
+/*=========================================================
+
+=========================================================*/
+JULIAN &DateJulian::getJulian(void){
+  return *julia;
+}
+/*=========================================================
+
+=========================================================*/
+int64 DateJulian::diff(const DateJulian &past){
+  return cJulianDiff(*julia,((DateJulian*)&past)->getJulian());
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::fromUtc(int64 value){
+  cJulianTo(cJulianFromUtc(value),*julia);
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+int64 DateJulian::toUtc(void){
+  return cJulianToUtc(*julia);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::reset(void){
+  return fromDouble(0);
+}
+/*=========================================================
+
+=========================================================*/
+DateJulian &DateJulian::parse(const String &value){
+  DateJulianFormat
+    df;
+
+  reset();
+  #define TEST(f)\
+    if(df.parse(*this,PSTRING(value),f))goto FIM;
+
+  TEST("dd/MM/yyyy HH:mm:ss")
+  TEST("dd/MM/yyyy HH:mm")
+  TEST("dd/MM/yyyy")
+  TEST("yyyy-MM-dd HH:mm:ss")
+  TEST("yyyy-MM-dd HH:mm")
+  TEST("yyyy-MM-dd")
+
+  reset();
+  FIM:
+  #undef TEST
+
+
+  return *this;
+}
+/*=========================================================
+
+=========================================================*/
+String DateJulian::format(const String &format){
+  return DateJulianFormat().format(*this,PSTRING(format));
+}
+

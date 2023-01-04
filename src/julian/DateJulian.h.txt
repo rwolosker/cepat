@@ -1,0 +1,58 @@
+/**********************************************************
+
+**********************************************************/
+class DateJulian:public Object{
+  protected:
+    JULIAN
+      *julia;
+
+    void init(void);
+    void update(void);
+  public:
+    DateJulian();
+    DateJulian(double value);
+    DateJulian(const DateJulian &value);
+    ~DateJulian();
+
+    DateJulian &addSecond(int value);
+    DateJulian &addMinute(int value);
+    DateJulian &addHour(int value);
+    DateJulian &addDay(int value);
+    DateJulian &addMonth(int value);
+    DateJulian &addYear(int value);
+
+    DateJulian &debug(void);
+    DateJulian &now(void);
+    DateJulian &reset(void);
+
+    DateJulian &set(int year=0,int month=0,int day=0,int hour=0,int minute=0,int second=0);
+
+    DateJulian &setSecond(int value);
+    DateJulian &setMinute(int value);
+    DateJulian &setHour(int value);
+    DateJulian &setDay(int value);
+    DateJulian &setMonth(int value);
+    DateJulian &setYear(int value);
+
+    int getYear(void);
+    int getMonth(void);
+    int getDay(void);
+    int getHour(void);
+    int getMinute(void);
+    int getSecond(void);
+
+    DateJulian &fromDouble(double value);
+    DateJulian &fromUtc(int64 value);
+
+    JULIAN &getJulian(void);
+    double  get(void);
+    int64   diff(const DateJulian &past);
+    int64   toUtc(void);
+
+    operator double();
+    DateJulian &operator=(double value);
+    DateJulian &operator=(const DateJulian &value);
+
+    DateJulian &parse(const String &value);
+    String      format(const String &format="dd/MM/yyyy HH:mm:ss");
+};
